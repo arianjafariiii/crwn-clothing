@@ -6,35 +6,37 @@ import {signInWithGooglePopup,
 import FormInput from '../../components/form-input/form-input.component'
 import Button from "../button/button.component.jsx"
 import './sign-in-form.styles.scss'
+
+
+
 const defaultFormFields = {
     email: '',
     password: '',
 }
 
+
+
+
 const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { email, password} = formFields;
+    
     console.log(formFields);
     const resetFormFields = () => {
         setFormFields(defaultFormFields)
     }
     const signInWithGoogle = async () => { 
-        const {user} = await signInWithGooglePopup();
-        await createUserDocumentFromAuth(user);
+        await signInWithGooglePopup();
+        
         
     }
     const handleSubmit1 = async (event) => {
         event.preventDefault();
-    
-        console.log('Form submission started...');
-        console.log('Email:', email);
-        console.log('Password:', password);
-    
         try {
-            const response = await signInAuthUserWithEmailAndPassword(email, password);
-            console.log(response); // Check if this logs
+            await signInAuthUserWithEmailAndPassword(email, password);
+            resetFormFields()
         } catch (error) {
-            switch(error.code) {
+            switch(error.code) {     
                 case 'auth/wrong-password':
                     alert('oncorrect password and email');
                     break;
