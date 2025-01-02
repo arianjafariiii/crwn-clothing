@@ -16,11 +16,34 @@ const addCartItem = (cartItems, productToAdd) => {
 
 }
 
+const removeCartItem = (cartItems, productToRemove) => {
+    const existCartItem = cartItems.find((item) => item.id === productToRemove.id);
+
+
+    if(existCartItem.quantity === 1){
+        return cartItems.filter((cartItem) => cartItem.id !== productToRemove.id);
+    }
+
+
+    return cartItems.map((cartItem) =>
+    cartItem.id === productToRemove.id 
+    ? {...cartItem, quantity: cartItem.quantity - 1}
+    : cartItem
+    );
+};
+
+const clearCartItem = (cartItems, cartItemToClear) => {
+    return cartItems.filter((cartItem) =>  cartItem.id !== cartItemToClear.id);
+    
+}
+
 export const CartContext =  createContext({
     isCartOpen: false, 
     setIsCartOpen : () => {},
     CartItem: [],
     addItemToCart: () => {},
+    removeItemFromCard: () => {},
+    clearItemFromCart: () => {},
     cartCount: 0
 })
 
@@ -34,11 +57,19 @@ export const CartProvider = ({children}) => {
         setCartItems(addCartItem(cartItems, proctToAdd));
     }
 
+    const removeItemFromCard = (productToRemove) => {
+        setCartItems(removeCartItem(cartItems, productToRemove));
+    }
+
+    const clearItemFromCart = (cartItemToClear) => {
+        setCartItems(clearCartItem(cartItems, cartItemToClear));
+    }
+
 
     useEffect(() => {
         const newCartCount = cartItems.reduce((total, cartItem) => total = total + cartItem.quantity, 0)
         setCartCount(newCartCount);
     }, [cartItems])
-    const value = {isCartOpen, cartItems, addItemToCart, setIsCartOpen, cartCount};
+    const value = {isCartOpen, cartItems, clearItemFromCart , addItemToCart, removeItemFromCard, setIsCartOpen, cartCount};
     return <CartContext.Provider value = {value}> {children} </CartContext.Provider>; 
 }
